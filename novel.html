@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="/styles/novelstyle.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+    <audio id="Soundtrack" loop>
+      <source id="Source" src="">
+    </audio>
+    <div id="Loading"><h1>Loading...</h1></div>
+    <div id="NovelComponent1">
+      <img id="Character">
+      <div id="Fields">
+        <p id="CharacterName"></p>
+        <p id="TextField"></p>
+        <img src="/resources/arrow.svg" id="NextButton">
+      </div>
+    </div>
+    <div style="display: flex; justify-content: center;">
+      <div id="Choices">
+        <button id="choice1" class="choption"></button>
+        <button id="choice2" class="choption"></button>
+      <button id="choice3" class="choption"></button>
+      </div>
+    </div>
+    <div id="Items">
+      <p class="MenuItem">Menu</p>
+      <p class="MenuItem">Save</p>
+      <p class="MenuItem">Load</p>
+      <p class="MenuItem">Auto?? i would never</p>
+    </div>
+    <div id="SaveMenu">
+      <div class="SaveItem">
+        <img src="/images/sprites/yayy.png" alt="Save Slot 1" width="50" height="50">
+        <p>Empty Slot 1</p>
+      </div>
+      <div class="SaveItem">
+        <img src="/images/sprites/huh.png" alt="Save Slot 2" width="50" height="50">
+        <p>Empty Slot 2</p>
+      </div>
+    </div>
+    <div id="PauseMenu">
+      <p>Volume</p>
+      <input type="range" id="VolumeRange"><p id="VolumeValue"></p>
+      <p>Text Speed</p>
+      <input type="range" id="SpeedRange"><p id="SpeedValue"></p>
+    </div>
+    <div id="no-vertical">
+      <p>This novel does <b>not</b><br> support the vertical orientation. <br>Please flip your phone or enlarge your window's width.</p>
+    </div>
+    <script src="engine.js"></script>
+  </body>
+</html>

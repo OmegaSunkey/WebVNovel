@@ -1,0 +1,174 @@
+* {
+  box-sizing: border-box;
+}
+/* 
+  All of this is Mobile UI in vertical
+  This app is mobile first by default, but if
+  you dont want your novel to be played
+  vertically, then move all the components
+  to the @media query down below and change the 
+  no-vertical component's display value to flex.
+*/
+
+#no-vertical {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  left: -20px;
+  top: -20px;
+  height: 103vh;
+  width: 105vw;
+  color: white;
+  background-color: black;
+  margin: 0;
+  z-index: 10;
+}
+
+#NovelComponent1 {
+  position: absolute;
+  bottom: 25px;
+  width: 80vw;
+}
+
+#Items {
+  display: flex;
+  justify-content: space-around;
+}
+
+#PauseMenu {
+  display: none;
+  padding: 3em;
+  position: absolute;
+  background-color: white;
+  border: 1px solid;
+  width: 90%;
+  height: 75%;
+  top: 10%;
+  left: 5%;
+  z-index: 5;
+}
+
+#SaveMenu {
+  display: none;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  position: absolute;
+  background-color: white;
+  width: 90%;
+  height: 75%;
+  border: 1px solid;
+  top: 10%;
+  left: 5%;
+  z-index: 5;
+}
+
+.SaveItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.MenuItem {
+  border: 1px solid;
+  border-radius: 5px;
+  background-color: white;
+  padding: 8px;
+}
+
+#Fields {
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+  position: relative;
+  width: inherit;
+}
+
+#TextField {
+  width: 300px;
+  border: 2px solid;
+  border-radius: 8px;
+  padding: 2%;
+  margin-top: -12px;
+  background-color: white;
+  height: 8em;
+}
+
+#Character {
+  max-width: 7em;
+  position: absolute;
+  left: 190px;
+  bottom: 140px;
+  z-index: 1;
+}
+
+#CharacterName {
+  position: static;
+  border: 2px solid;
+  border-radius: 5px;
+  text-align: center;
+  padding: 6px 0 6px 0;
+  background-color: white;
+}
+
+#Loading {
+  width: 105vw;
+  height: 103vh;
+  display: none;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  color: white;
+  z-index: 3;
+  margin: -30px;
+  transition: display 2s;
+}
+
+#NextButton {
+  display: none;
+  position: absolute;
+  width: 20px;
+  bottom: 22px;
+  right: 38px;
+}
+
+#Choices {
+  display: flex;
+  position: absolute;
+  top: 36%;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: column;
+  width: 90%;
+}
+
+#VolumeValue, #SpeedValue {
+  display: inline;
+  padding-left: 8px;
+}
+
+.choption {
+  display: none;
+  border: 2px solid;
+  border-radius: 8px;
+  width: 80%;
+  height: 3em;
+  margin: 10px 0 10px 0;
+  background-color: white;
+}
+
+body {
+  height: 98vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+/* Laptop Layout */
+
+@media only screen and (orientation: landscape) {
+  #TextField {
+    max-width: 800px;
+  }
+}

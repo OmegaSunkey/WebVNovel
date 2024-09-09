@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="/styles/indexstyle.css">
+    <meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0"/>
+    <script>
+      console.log(localStorage.length)
+      let getConfig = new XMLHttpRequest();
+      getConfig.onload = function() {
+        let config = JSON.parse(this.responseText);
+        localStorage.setItem("TextSpeed", config.options.speed);
+        localStorage.setItem("NovelTitle", config.title);
+      };
+      getConfig.open('GET', "/config.json");
+      if(localStorage.length != 3) { getConfig.send(); }
+    </script>
+  </head>
+  <body>
+    <audio id="Main" loop>
+      <source src="/resources/soundtracks/main.ogg" type="audio/ogg">
+      <source src="/resources/soundtracks/main.mp3" type="audio/mpeg">
+    </audio>
+    <div id="VNStartScreen">
+      <h1 id="Title"></h1>
+      <div id="StartItems">
+        <h2 id="PlayButton" class="Buttons">Play</h2>
+        <p id="OptionsButton" class="Buttons" onclick="document.getElementById('Options').style.display = 'block'">Options????</p>
+      </div>
+    </div>
+    <div id="Options">
+      <p>Volume</p>
+      <input type="range" oninput="changeVolume()" id="VolumeRange"><p id="VolumeValue"></p>
+      <p>Text Speed</p>
+      <input type="range" oninput="changeSpeed()" id="SpeedRange"><p id="RangeValue"></p>
+      <img src="/resources/close.svg" id="CloseButton" onclick="document.getElementById('Options').style.display = 'none'">
+    </div>
+    <img src="/resources/mute.svg" id="ONETIMECLICKIMGOINGINSANE">
+    <script>
+      document.getElementById("PlayButton").onclick = function() {window.location.assign("/novel.html");};
+      let MuteButton = document.getElementById("ONETIMECLICKIMGOINGINSANE");
+      let Main = document.getElementById("Main");
+      Main.volume = parseInt(localStorage.Volume) * 0.01
+      let SpeedRange = document.getElementById("SpeedRange");
+      let RangeValue = document.getElementById("RangeValue")
+      SpeedRange.value = localStorage.getItem("TextSpeed");
+      VolumeRange.value = localStorage.Volume
+      RangeValue.innerText = SpeedRange.value + "ms";
+      VolumeValue.innerText = VolumeRange.value + "%";
+      
+      MuteButton.onclick = function() {
+        Main.play();
+        MuteButton.style.display = "none";
+      }
+      
+      function changeSpeed() {
+        localStorage.setItem("TextSpeed", SpeedRange.value);
+        RangeValue.innerText = SpeedRange.value + "ms"
+      }
+      function changeVolume() {
+        localStorage.setItem("Volume", VolumeRange.value);
+        VolumeValue.innerText = VolumeRange.value + "%";
+        Main.volume = VolumeRange.value * 0.01
+        console.log(Main.volume)
+      }
+      document.title = localStorage.getItem("NovelTitle");
+      document.getElementById("Title").innerText = localStorage.getItem("NovelTitle");
+    </script>
+  </body>
+</html>

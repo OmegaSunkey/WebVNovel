@@ -1,0 +1,104 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('/images/bg/main.png');
+}
+
+#Title {
+  font-family: cursive;
+  font-size: 52px;
+}
+
+#Options {
+  display: none;
+  position: absolute;
+  width: 90%;
+  height: 75%;
+  border: 1px solid;
+  padding: 4em;
+  top: 10%;
+  left: 5%;
+  background-color: white;
+}
+
+#RangeValue, #VolumeValue {
+  display: inline;
+  padding-left: 8px;
+}
+
+#CloseButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+}
+
+#VNStartScreen {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#PlayButton {
+  animation-name: rainbow;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+}
+
+.Buttons {
+  border: 1px solid;
+  border-radius: 10px;
+  background-color: white;
+  padding: 16px;
+  text-align: center;
+  font-family: 'Georgia';
+}
+
+#ONETIMECLICKIMGOINGINSANE {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 32px;
+  height: auto;
+}
+
+@keyframes rainbow {
+  0% {
+    color: red;
+  }
+  
+  14% {
+    color: orange;
+  }
+  
+  28% {
+    color: yellow;
+  }
+  
+  42% {
+    color: green;
+  }
+  
+  56% {
+    color: cyan;
+  }
+  
+  70% {
+    color: blue;
+  }
+  
+  84% {
+    color: purple;
+  }
+  
+  100% {
+    color: red;
+  }
+}
