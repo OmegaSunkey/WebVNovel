@@ -214,4 +214,8 @@ VolumeRange.oninput = function(e) {
   e.stopPropagation();
 }
 
+let debug = document.getElementById("debug");
+window.onresize = () => { debug.innerHTML = "H W " + window.innerHeight + "px;" + window.innerWidth + "px"; console.log(this)}
+
+
 requestScenes("/scenes/test.novel");

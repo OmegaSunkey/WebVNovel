@@ -3,7 +3,8 @@
   <head>
     <title></title>
     <link rel="stylesheet" href="/styles/novelstyle.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/resources/favicon.png">
+    <meta name="viewport" content="width=device-width, height=device-height initial-scale=1.0">
   </head>
   <body>
     <audio id="Soundtrack" loop>
@@ -18,7 +19,7 @@
         <img src="/resources/arrow.svg" id="NextButton">
       </div>
     </div>
-    <div style="display: flex; justify-content: center;">
+    <div id="CenterCh" style="display: flex; justify-content: center;">
       <div id="Choices">
         <button id="choice1" class="choption"></button>
         <button id="choice2" class="choption"></button>
@@ -46,6 +47,7 @@
       <input type="range" id="VolumeRange"><p id="VolumeValue"></p>
       <p>Text Speed</p>
       <input type="range" id="SpeedRange"><p id="SpeedValue"></p>
+      <p id="debug"></p>
     </div>
     <div id="no-vertical">
       <p>This novel does <b>not</b><br> support the vertical orientation. <br>Please flip your phone or enlarge your window's width.</p>

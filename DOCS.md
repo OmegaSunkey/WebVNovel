@@ -5,6 +5,9 @@ These files are in fact just an JSON array. Please keep the array unless you don
 
 When the engine gets to the end of the array, it will move the user back to the home screen. If you don't want to end so suddenly, please remember to put the `Scene!` component.
 
+## The config.json file
+This defines some attributes of your novel. Current attributes are `name`, `TextSpeed`
+
 ## COMPONENTS
 
 Components are the actions and descriptors of your novel. 

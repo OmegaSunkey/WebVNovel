@@ -3,6 +3,7 @@
   <head>
     <title></title>
     <link rel="stylesheet" href="/styles/indexstyle.css">
+    <link rel="icon" href="/resources/favicon.png">
     <meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0"/>
     <script>
       console.log(localStorage.length)
@@ -11,8 +12,9 @@
         let config = JSON.parse(this.responseText);
         localStorage.setItem("TextSpeed", config.options.speed);
         localStorage.setItem("NovelTitle", config.title);
+        localStorage.setItem("Volume", 50);
       };
-      getConfig.open('GET', "/config.json");
+      getConfig.open('GET', "/config.json", false);
       if(localStorage.length != 3) { getConfig.send(); }
     </script>
   </head>
@@ -37,14 +39,17 @@
     </div>
     <img src="/resources/mute.svg" id="ONETIMECLICKIMGOINGINSANE">
     <script>
-      document.getElementById("PlayButton").onclick = function() {window.location.assign("/novel.html");};
+      document.getElementById("PlayButton").onclick = function() {
+        if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch((error) => {alert(`${error.message} ${error.name}`)})
+        window.location.assign("/novel.html");
+      };
       let MuteButton = document.getElementById("ONETIMECLICKIMGOINGINSANE");
       let Main = document.getElementById("Main");
-      Main.volume = parseInt(localStorage.Volume) * 0.01
+      Main.volume = parseInt(localStorage.Volume) * 0.01;
       let SpeedRange = document.getElementById("SpeedRange");
       let RangeValue = document.getElementById("RangeValue")
       SpeedRange.value = localStorage.getItem("TextSpeed");
-      VolumeRange.value = localStorage.Volume
+      VolumeRange.value = localStorage.Volume;
       RangeValue.innerText = SpeedRange.value + "ms";
       VolumeValue.innerText = VolumeRange.value + "%";
       

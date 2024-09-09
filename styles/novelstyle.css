@@ -26,9 +26,9 @@
 }
 
 #NovelComponent1 {
-  position: absolute;
-  bottom: 25px;
-  width: 80vw;
+  position: fixed;
+  bottom: 15px;
+  width: 320px;
 }
 
 #Items {
@@ -38,13 +38,13 @@
 
 #PauseMenu {
   display: none;
-  padding: 3em;
+  padding: 2em;
   position: absolute;
   background-color: white;
   border: 1px solid;
   width: 90%;
-  height: 75%;
-  top: 10%;
+  height: 65%;
+  top: 80px;
   left: 5%;
   z-index: 5;
 }
@@ -56,9 +56,9 @@
   position: absolute;
   background-color: white;
   width: 90%;
-  height: 75%;
+  height: 65%;
   border: 1px solid;
-  top: 10%;
+  top: 80px;
   left: 5%;
   z-index: 5;
 }
@@ -82,7 +82,7 @@
   flex-direction: column;
   z-index: 2;
   position: relative;
-  width: inherit;
+  width: 300px;
 }
 
 #TextField {
@@ -131,7 +131,8 @@
   position: absolute;
   width: 20px;
   bottom: 22px;
-  right: 38px;
+  left: 273px;
+  z-index: 2;
 }
 
 #Choices {
@@ -163,12 +164,62 @@ body {
   height: 98vh;
   background-size: cover;
   background-repeat: no-repeat;
+  font-family: sans-serif;
 }
 
-/* Laptop Layout */
+/* Both Phone & PC Layout */
 
 @media only screen and (orientation: landscape) {
+  #NovelComponent1 {
+    bottom: 50px;
+  }
+  #Items {
+    position: fixed;
+    bottom: 5px;
+    width: 40%;
+    left: 30%;
+    font-size: 12px;
+  }
+  #CenterCh {
+    top: 50px;
+  }
+  #PauseMenu, #SaveMenu {
+    height: 80%;
+  }
+}
+/*
+  For (the bad) mobile devices in horizontal
+*/
+@media only screen and (height <= 400px) {
+  #CenterCh {
+    position: absolute;
+    right: 24px;
+    width: 40%;
+    top: 100px;
+  }
+}
+
+/* PC layout */
+
+@media (width >= 900px) {
   #TextField {
-    max-width: 800px;
+    width: 100%;
+  }
+  #Fields {
+    width: 90%;
+  }
+  #NovelComponent1 {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    left: 10%;
+  }
+  #Character {
+    left: initial;
+    right: 5%;
+  }
+  #NextButton {
+    left: initial;
+    right: 12px;
   }
 }
