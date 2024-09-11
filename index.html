@@ -13,8 +13,9 @@
         localStorage.setItem("TextSpeed", config.options.speed);
         localStorage.setItem("NovelTitle", config.title);
         localStorage.setItem("Volume", 50);
+        setTitle(config.title);
       };
-      getConfig.open('GET', "/config.json", false);
+      getConfig.open('GET', "/config.json");
       if(localStorage.length != 3) { getConfig.send(); }
     </script>
   </head>
@@ -58,6 +59,11 @@
         MuteButton.style.display = "none";
       }
       
+      function setTitle(title) {
+        document.title = title;
+        document.getElementById("Title").innerText = title;
+      }
+      
       function changeSpeed() {
         localStorage.setItem("TextSpeed", SpeedRange.value);
         RangeValue.innerText = SpeedRange.value + "ms"
@@ -68,8 +74,6 @@
         Main.volume = VolumeRange.value * 0.01
         console.log(Main.volume)
       }
-      document.title = localStorage.getItem("NovelTitle");
-      document.getElementById("Title").innerText = localStorage.getItem("NovelTitle");
     </script>
   </body>
 </html>
