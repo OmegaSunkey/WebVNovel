@@ -2,6 +2,8 @@ let i = 0;
 let SceneCounter = 0;
 let CurrentlyWriting = false;
 let SceneToLoad;
+let ScenePath;
+let buttonArray = [];
 let stopper = false;
 /* let options = {
   TextSpeed: parseInt(localStorage.getItem("TextSpeed")),
@@ -24,6 +26,7 @@ let SpeedRange = document.getElementById("SpeedRange");
 let SpeedValue = document.getElementById("SpeedValue");
 let Player = document.getElementById("Soundtrack");
 let SourceAudio = document.getElementById("Source");
+let SaveItems = document.getElementsByClassName("SaveItem");
 
 //init values 
 Player.volume = parseInt(localStorage.Volume) * 0.01;
@@ -32,7 +35,7 @@ VolumeValue.innerHTML = localStorage.Volume + "%";
 SpeedRange.value = parseInt(localStorage.TextSpeed);
 SpeedValue.innerHTML = localStorage.TextSpeed + "ms";
 
-//engine start
+//engine functions
 function controller(counter, TextArray) {
   if(TextArray[counter] == undefined) window.location.assign("/index.html");
   if(CurrentlyWriting) { 
@@ -50,7 +53,6 @@ function controller(counter, TextArray) {
     Source.src = TextArray[counter].substr(6);
     Player.load();
     Player.play();
-    //setTimeout(() => {Player.load(); Player.play();}, 1000);
     counter++;
     SceneCounter++;
   }
@@ -74,6 +76,7 @@ function controller(counter, TextArray) {
     while(true) {
       if(!TextArray[counter].startsWith("Button!") || TextArray[counter] == "undefined") return;
       changeButtons("block", buttonCounter, TextArray[counter].substr(7), TextArray[counter].split("<")[1].slice(0,-1));
+      buttonArray.push(TextArray[counter].substr(7));
       counter++;
       SceneCounter++;
       buttonCounter++;
@@ -84,9 +87,13 @@ function controller(counter, TextArray) {
     return;
   }
   if(TextArray[counter].startsWith("Noname!")) {
-    CharacterName.style.display = "none";
+    CharacterName.style.display = "hidden";
+  }
+  if(TextArray[counter].startsWith("Nochar!")) {
+    CharacterImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAnSURBVHic7cEBDQAAAMKg909tDjegAAAAAAAAAAAAAAAAAAAAgHcDQEAAAY/yyVEAAAAASUVORK5CYII="
   }
   stopper = false;
+  console.log(counter);
   NextButton.style.display = "none";
   TextField.innerHTML = " ";
   repeater(addChar, localStorage.TextSpeed, TextArray[counter].length, TextField, TextArray[counter]);
@@ -102,13 +109,15 @@ function changeButtons(display, number, content, click) {
   let buttons = document.getElementsByClassName("choption");
   buttons[number].style.display = display;
   buttons[number].innerHTML = content;
+  console.log(display + number + content + click);
   if(click.includes("continue")) {
     buttons[number].onclick = function() {
       let opt = document.getElementsByClassName("choption");
-      for(let bbb of opt) {
-        bbb.innerHTML = " ";
-        bbb.style.display = "none";
+      for(let button of opt) {
+        button.innerHTML = " ";
+        button.style.display = "none";
       }
+      buttonArray = [];
       controller(SceneCounter, SceneToLoad);
       setTimeout(function() { 
         window.onclick = function() {
@@ -119,10 +128,11 @@ function changeButtons(display, number, content, click) {
   } else {
     buttons[number].onclick = function() {
       let opt = document.getElementsByClassName("choption");
-      for(let bbb of opt) {
-        bbb.innerHTML = " ";
-        bbb.style.display = "none";
+      for(let button of opt) {
+        button.innerHTML = " ";
+        button.style.display = "none";
       }
+      buttonArray = [];
       requestScenes(click);
     };
   }
@@ -154,14 +164,31 @@ function repeater(func, wait, times) {
   setTimeout(interv, wait);
 }
 
-function requestScenes(scene) {
+function requestScenes(scene, countermod) {
   LoadingComponent.style.display = "flex";
-  SceneCounter = 0;
+  if(countermod == undefined) {
+    SceneCounter = 0;
+    countermod = 0;
+  } else {
+    SceneCounter = countermod;
+  }
+  ScenePath = scene;
   let request = new XMLHttpRequest();
   request.onload = function() {
     LoadingComponent.style.display = "none";
     SceneToLoad = this.response;
-    controller(SceneCounter, SceneToLoad);
+    //strange condition...
+    if(SceneToLoad[countermod].startsWith("Button!")) {
+      while(true) {
+        if(!SceneToLoad[countermod].startsWith("Button!")) { 
+          console.log(countermod);
+          controller(countermod, SceneToLoad);
+          break;
+        }
+        countermod--;
+        SceneCounter--;
+      }
+    } else controller(countermod, SceneToLoad);
     if((typeof window.onclick) != "function") {
       window.onclick = function() {
         explode();
@@ -174,8 +201,24 @@ function requestScenes(scene) {
   request.send();
 }
 
+function setupLoad(bg, audio, name, img, button, noname) {
+  document.body.style.backgroundImage = `url(${bg})`;
+  Source.src = audio;
+  Player.play();
+  let size = name.length * 3 + 80;
+  CharacterName.style.display = noname == "hidden" ? "hidden" : "block";
+  CharacterName.style.width = size.toString() + "px";
+  CharacterName.innerHTML = name;
+  CharacterImage.src = img;
+  let opt = document.getElementsByClassName("choption");
+  for(let button of opt) {
+    button.innerHTML = " ";
+    button.style.display = "none";
+    console.log("done!");
+  }
+}
+
 function explode() {
-  Player.muted = false;
   Player.play();
   window.onclick = function() {
     controller(SceneCounter, SceneToLoad);
@@ -184,20 +227,44 @@ function explode() {
 
 //document functions
 
+// Menu button
 MenuButtons.children[0].onclick = function(e) {
   if(SaveMenu.style.display == "flex") SaveMenu.style.display = "none";
   PauseMenu.style.display = PauseMenu.style.display == "block" ? "none" : "block";
   e.stopPropagation();
 }
 
+// Save button
 MenuButtons.children[1].onclick = function(e) {
   if(PauseMenu.style.display == "block") PauseMenu.style.display = "none"
   SaveMenu.style.display = SaveMenu.style.display == "flex" ? "none" : "flex";
+  for(let save of SaveItems) {
+    if(localStorage.getItem(save.id)) {
+      save.children[1].innerText = "Slot " + save.id.substr(4);
+    }
+    save.onclick = function(e) {
+      localStorage.setItem(save.id, JSON.stringify([document.body.style.backgroundImage, Source.src, CharacterName.innerHTML, CharacterImage.src, buttonArray, CharacterName.style.display, ScenePath, SceneCounter-1]));
+      save.children[1].innerText = "Slot " + save.id.substr(4);
+      e.stopPropagation();
+    }
+  }
   e.stopPropagation();
 }
 
+// Load button
 MenuButtons.children[2].onclick = function(e) {
   SaveMenu.style.display = SaveMenu.style.display == "flex" ? "none" : "flex";
+  for(let save of SaveItems) {
+    if(localStorage.getItem(save.id)) {
+      save.children[1].innerText = "Slot " + save.id.substr(4);
+    }
+    save.onclick = function(e) {
+      temp = JSON.parse(localStorage.getItem(save.id));
+      requestScenes(temp[6], temp[7]);
+      setupLoad(...temp);
+      e.stopPropagation();
+    }
+  }
   e.stopPropagation();
 }
 
