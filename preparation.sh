@@ -8,6 +8,11 @@ for i in ./images/*/*; do
   temp+="\"${i:1}\", "
   echo "${i:1}"
 done
+
+for i in ./resources/*; do
+  temp+="\"${i:1}\", "
+  echo "${i:1}"
+done
 #echo "${config:0:-2},"
 
 if [[ "$config" =~ "list" ]]; then

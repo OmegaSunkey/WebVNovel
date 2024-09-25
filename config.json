@@ -1,7 +1,6 @@
 {
   "title": "Mahiro's novel",
   "options": {
-    "speed": 40
   },
   "list": ["/images/bg/main.png", "/images/bg/street.png", "/images/sprites/huh.png", "/images/sprites/omg.png", "/images/sprites/teehee.png", "/images/sprites/yayy.png"]
 }

@@ -6,22 +6,23 @@
     <link rel="icon" href="/resources/favicon.png">
     <meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0"/>
     <script>
-      console.log(localStorage.length)
+      function setTitle(title) {
+        document.title = title;
+      }
       let getConfig = new XMLHttpRequest();
       getConfig.onload = function() {
         let config = JSON.parse(this.responseText);
-        localStorage.setItem("TextSpeed", config.options.speed);
+        localStorage.setItem("TextSpeed", 40);
         localStorage.setItem("NovelTitle", config.title);
         localStorage.setItem("Volume", 50);
         setTitle(config.title);
       };
       getConfig.open('GET', "/config.json");
-      if(localStorage.length != 3) { getConfig.send(); }
+      if(localStorage.length < 3) { getConfig.send(); }
     </script>
   </head>
   <body>
     <audio id="Main" loop>
-      <source src="/resources/soundtracks/main.ogg" type="audio/ogg">
       <source src="/resources/soundtracks/main.mp3" type="audio/mpeg">
     </audio>
     <div id="VNStartScreen">
@@ -40,10 +41,12 @@
     </div>
     <img src="/resources/mute.svg" id="ONETIMECLICKIMGOINGINSANE">
     <script>
+      document.title = localStorage.NovelTitle;
       document.getElementById("PlayButton").onclick = function() {
-        if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch((error) => {alert(`${error.message} ${error.name}`)})
-        window.location.assign("/novel.html");
+        //window.location.assign("/novel.html");
+        forbidden();
       };
+      document.getElementById("Title").innerText = localStorage.NovelTitle;
       let MuteButton = document.getElementById("ONETIMECLICKIMGOINGINSANE");
       let Main = document.getElementById("Main");
       Main.volume = parseInt(localStorage.Volume) * 0.01;
@@ -59,11 +62,6 @@
         MuteButton.style.display = "none";
       }
       
-      function setTitle(title) {
-        document.title = title;
-        document.getElementById("Title").innerText = title;
-      }
-      
       function changeSpeed() {
         localStorage.setItem("TextSpeed", SpeedRange.value);
         RangeValue.innerText = SpeedRange.value + "ms"
@@ -73,6 +71,14 @@
         VolumeValue.innerText = VolumeRange.value + "%";
         Main.volume = VolumeRange.value * 0.01
         console.log(Main.volume)
+      }
+      
+      async function forbidden() {
+        let novel = await fetch("/novel.html")
+        let raw = await novel.text();
+        
+        document.write(raw);
+        return;
       }
     </script>
   </body>

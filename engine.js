@@ -20,20 +20,22 @@ document.title = localStorage.getItem("NovelTitle");
 let MenuButtons = document.getElementById("Items");
 let SaveMenu = document.getElementById("SaveMenu");
 let PauseMenu = document.getElementById("PauseMenu");
-let VolumeRange = document.getElementById("VolumeRange");
-let VolumeValue = document.getElementById("VolumeValue");
-let SpeedRange = document.getElementById("SpeedRange");
-let SpeedValue = document.getElementById("SpeedValue");
+let VolumeRange2 = document.getElementById("VolumeRange");
+let VolumeValue2 = document.getElementById("VolumeValue");
+let SpeedRange2 = document.getElementById("SpeedRange");
+let SpeedValue2 = document.getElementById("SpeedValue");
 let Player = document.getElementById("Soundtrack");
 let SourceAudio = document.getElementById("Source");
 let SaveItems = document.getElementsByClassName("SaveItem");
+let TextAlert = document.getElementById("Alert");
 
 //init values 
 Player.volume = parseInt(localStorage.Volume) * 0.01;
-VolumeRange.value = parseInt(localStorage.Volume);
-VolumeValue.innerHTML = localStorage.Volume + "%";
-SpeedRange.value = parseInt(localStorage.TextSpeed);
-SpeedValue.innerHTML = localStorage.TextSpeed + "ms";
+VolumeRange2.value = parseInt(localStorage.Volume);
+VolumeValue2.innerHTML = localStorage.Volume + "%";
+SpeedRange2.value = parseInt(localStorage.TextSpeed);
+SpeedValue2.innerHTML = localStorage.TextSpeed + "ms";
+if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch((error) => {alert(`${error.message} ${error.name}`)})
 
 //engine functions
 function controller(counter, TextArray) {
@@ -189,12 +191,9 @@ function requestScenes(scene, countermod) {
         SceneCounter--;
       }
     } else controller(countermod, SceneToLoad);
-    if((typeof window.onclick) != "function") {
-      window.onclick = function() {
-        explode();
-        controller(SceneCounter, SceneToLoad);
-      };
-    }
+    window.onclick = function() {
+      controller(SceneCounter, SceneToLoad);
+    };
   };
   request.open('GET', scene);
   request.responseType = 'json';
@@ -218,13 +217,6 @@ function setupLoad(bg, audio, name, img, button, noname) {
   }
 }
 
-function explode() {
-  Player.play();
-  window.onclick = function() {
-    controller(SceneCounter, SceneToLoad);
-  };
-}
-
 //document functions
 
 // Menu button
@@ -241,10 +233,18 @@ MenuButtons.children[1].onclick = function(e) {
   for(let save of SaveItems) {
     if(localStorage.getItem(save.id)) {
       save.children[1].innerText = "Slot " + save.id.substr(4);
+      save.children[0].src = localStorage.getItem(save.id + "img");
     }
     save.onclick = function(e) {
       localStorage.setItem(save.id, JSON.stringify([document.body.style.backgroundImage, Source.src, CharacterName.innerHTML, CharacterImage.src, buttonArray, CharacterName.style.display, ScenePath, SceneCounter-1]));
       save.children[1].innerText = "Slot " + save.id.substr(4);
+      html2canvas(document.body, {windowWidth: 640, windowHeight: 360, backgroundColor: null, imageTimeout: 0}).then((c) => {
+        save.children[0].src = c.toDataURL("image/png");
+        localStorage.setItem(save.id + "img", c.toDataURL("image/png"));
+        TextAlert.style.display = "block";
+        TextAlert.innerText = `Saved on Slot ${save.id}`;
+        setTimeout(() => { TextAlert.style.display = "none"; }, 2000);
+      })
       e.stopPropagation();
     }
   }
@@ -257,6 +257,7 @@ MenuButtons.children[2].onclick = function(e) {
   for(let save of SaveItems) {
     if(localStorage.getItem(save.id)) {
       save.children[1].innerText = "Slot " + save.id.substr(4);
+      save.children[0].src = localStorage.getItem(save.id + "img");
     }
     save.onclick = function(e) {
       temp = JSON.parse(localStorage.getItem(save.id));
@@ -268,16 +269,16 @@ MenuButtons.children[2].onclick = function(e) {
   e.stopPropagation();
 }
 
-SpeedRange.oninput = function(e) {
-  localStorage.setItem("TextSpeed", SpeedRange.value);
-  SpeedValue.innerHTML = SpeedRange.value + "ms";
+SpeedRange2.oninput = function(e) {
+  localStorage.setItem("TextSpeed", SpeedRange2.value);
+  SpeedValue2.innerHTML = SpeedRange2.value + "ms";
   e.stopPropagation();
 }
 
-VolumeRange.oninput = function(e) {
-  localStorage.setItem("Volume", VolumeRange.value);
-  VolumeValue.innerHTML = VolumeRange.value + "%";
-  Player.volume = VolumeRange.value * 0.01;
+VolumeRange2.oninput = function(e) {
+  localStorage.setItem("Volume", VolumeRange2.value);
+  VolumeValue2.innerHTML = VolumeRange2.value + "%";
+  Player.volume = VolumeRange2.value * 0.01;
   e.stopPropagation();
 }
 
