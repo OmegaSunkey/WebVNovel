@@ -5,21 +5,6 @@
     <link rel="stylesheet" href="/styles/indexstyle.css">
     <link rel="icon" href="/resources/favicon.png">
     <meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0"/>
-    <script>
-      function setTitle(title) {
-        document.title = title;
-      }
-      let getConfig = new XMLHttpRequest();
-      getConfig.onload = function() {
-        let config = JSON.parse(this.responseText);
-        localStorage.setItem("TextSpeed", 40);
-        localStorage.setItem("NovelTitle", config.title);
-        localStorage.setItem("Volume", 50);
-        setTitle(config.title);
-      };
-      getConfig.open('GET', "/config.json");
-      if(localStorage.length < 3) { getConfig.send(); }
-    </script>
   </head>
   <body>
     <audio id="Main" loop>
@@ -41,18 +26,29 @@
     </div>
     <img src="/resources/mute.svg" id="ONETIMECLICKIMGOINGINSANE">
     <script>
-      document.title = localStorage.NovelTitle;
+      if(localStorage.length == 0) {
+		fetch("/config.json").then(config => config.json()).then(config => {
+			document.title = config.title;
+			localStorage.setItem("NovelTitle", config.title);
+			Title.innerText = config.title;
+			localStorage.setItem("TextSpeed", 40);
+			localStorage.setItem("Volume", 50);
+		})
+	  } else {
+		document.title = localStorage.NovelTitle;
+		Title.innerText = localStorage.NovelTitle;
+	  }
+	  
       document.getElementById("PlayButton").onclick = function() {
-        //window.location.assign("/novel.html");
         forbidden();
       };
-      document.getElementById("Title").innerText = localStorage.NovelTitle;
+	  
       let MuteButton = document.getElementById("ONETIMECLICKIMGOINGINSANE");
       let Main = document.getElementById("Main");
-      Main.volume = parseInt(localStorage.Volume) * 0.01;
+      Main.volume = (parseInt(localStorage.Volume) || 50 )* 0.01;
       let SpeedRange = document.getElementById("SpeedRange");
       let RangeValue = document.getElementById("RangeValue")
-      SpeedRange.value = localStorage.getItem("TextSpeed");
+      SpeedRange.value = localStorage.getItem("TextSpeed") || 40;
       VolumeRange.value = localStorage.Volume;
       RangeValue.innerText = SpeedRange.value + "ms";
       VolumeValue.innerText = VolumeRange.value + "%";
@@ -70,7 +66,6 @@
         localStorage.setItem("Volume", VolumeRange.value);
         VolumeValue.innerText = VolumeRange.value + "%";
         Main.volume = VolumeRange.value * 0.01
-        console.log(Main.volume)
       }
       
       async function forbidden() {
