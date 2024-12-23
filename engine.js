@@ -5,10 +5,6 @@ let SceneToLoad;
 let ScenePath;
 let buttonArray = [];
 let stopper = false;
-/* let options = {
-  TextSpeed: parseInt(localStorage.getItem("TextSpeed")),
-  Volume: parseInt(localStorage.Volume)
-}; */
 
 //document objects
 let CharacterImage = document.getElementById("Character");
@@ -35,76 +31,103 @@ VolumeRange2.value = parseInt(localStorage.Volume);
 VolumeValue2.innerHTML = localStorage.Volume + "%";
 SpeedRange2.value = parseInt(localStorage.TextSpeed);
 SpeedValue2.innerHTML = localStorage.TextSpeed + "ms";
-if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch((error) => {alert(`${error.message} ${error.name}`)})
+
+if(!document.fullscreenElement) {
+	document.documentElement.requestFullscreen().catch( (error) => { 
+		alert(`${error.message} ${error.name}`); 
+	});
+}
 
 //engine functions
 function controller(counter, TextArray) {
-  if(TextArray[counter] == undefined) window.location.assign("/index.html");
-  if(CurrentlyWriting) { 
-    TextField.innerHTML = TextArray[counter-1];
-    CurrentlyWriting = false;
-    stopper = true;
-    return;
-  }
-  if(TextArray[counter].startsWith("Bg!")) {
-    document.body.style.backgroundImage = `url(${TextArray[counter].substr(3)})`;
-    counter++;
-    SceneCounter++;
-  }
-  if(TextArray[counter].startsWith("Audio!")) {
-    Source.src = TextArray[counter].substr(6);
-    Player.load();
-    Player.play();
-    counter++;
-    SceneCounter++;
-  }
-  if(TextArray[counter].startsWith("Name!")) {
-    let name = TextArray[counter].substr(5);
-    let size = name.length * 3 + 80;
-    CharacterName.style.display = "block";
-    CharacterName.style.width = size.toString() + "px";
-    CharacterName.innerHTML = name;
-    counter++;
-    SceneCounter++;
-  }
-  if(TextArray[counter].startsWith("Image!")) {
-    CharacterImage.src = TextArray[counter].substr(6);
-    counter++;
-    SceneCounter++;
-  }
-  if(TextArray[counter].startsWith("Button!")) {
-    let buttonCounter = 0;
-    window.onclick = null;
-    while(true) {
-      if(!TextArray[counter].startsWith("Button!") || TextArray[counter] == "undefined") return;
-      changeButtons("block", buttonCounter, TextArray[counter].substr(7), TextArray[counter].split("<")[1].slice(0,-1));
-      buttonArray.push(TextArray[counter].substr(7));
-      counter++;
-      SceneCounter++;
-      buttonCounter++;
-    }
-  }
-  if(TextArray[counter].startsWith("Scene!")) {
-    requestScenes(TextArray[counter].substr(6));
-    return;
-  }
-  if(TextArray[counter].startsWith("Noname!")) {
-    CharacterName.style.display = "hidden";
-  }
-  if(TextArray[counter].startsWith("Nochar!")) {
-    CharacterImage.src = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARzQklUCAgICHwIZIgAAAAnSURBVHic7cEBDQAAAMKg909tDjegAAAAAAAAAAAAAAAAAAAAgHcDQEAAAY/yyVEAAAAASUVORK5CYII="
-  }
-  stopper = false;
-  console.log(counter);
-  NextButton.style.display = "none";
-  TextField.innerHTML = " ";
-  repeater(addChar, localStorage.TextSpeed, TextArray[counter].length, TextField, TextArray[counter]);
-  SceneCounter++;
+	if(TextArray[counter] == undefined) window.location.assign("/index.html");
+	
+	if(CurrentlyWriting) {
+		TextField.innerHTML = TextArray[counter-1];
+		CurrentlyWriting = false;
+		stopper = true;
+		return;
+	}
+	
+	let SplitArray = TextArray[counter].split("!");
+	
+	switch(SplitArray[0]) {
+		case "Bg":
+			document.body.style.backgroundImage = `url(${SplitArray[1]})`;
+			//counter++;
+			SceneCounter++;
+			controller(SceneCounter, TextArray);
+			break;
+		case "Audio":
+			SourceAudio.src = SplitArray[1];
+			Player.load();
+			Player.play();
+			SceneCounter++;
+			controller(SceneCounter, TextArray);
+			break;
+		case "Name":
+			let name = SplitArray[1];
+			let size = name.length * 3 + 80;
+			CharacterName.style.display = "block";
+			CharacterName.style.width = size.toString() + "px";
+			CharacterName.innerHTML = name;
+			SceneCounter++;
+			controller(SceneCounter, TextArray);
+			break;
+		case "Image":
+			CharacterImage.src = SplitArray[1];
+			SceneCounter++;
+			controller(SceneCounter, TextArray);
+			break;
+		case "Button":
+			unsetKeys();
+			let int = counter;
+			while (true) {
+				if(TextArray[int].split("!")[0] !== "Button" || TextArray[int].split("!")[1] == "undefined") break;
+				buttonArray.push(TextArray[int].split("!")[1]);
+				changeButtons("block", buttonArray.length-1, TextArray[int].split("!")[1], TextArray[int].split("<")[1].slice(0, -1));
+				int++;
+				SceneCounter++;
+			}
+			break;
+		case "Scene":
+			requestScenes(SplitArray[1]);
+			break;
+		case "Noname":
+			CharacterName.style.display = "hidden";
+			SceneCounter++;
+			controller(SceneCounter, TextArray);
+			break;
+		case "Nochar":
+			CharacterImage.style.display = "hidden";
+			SceneCounter++;
+			controller(SceneCounter, TextArray);
+			break;
+		default:
+			stopper = false;
+			console.log(counter);
+			NextButton.style.display = "none";
+			TextField.innerHTML = " ";
+			repeater(addChar, localStorage.TextSpeed, TextArray[counter].length, TextField, TextArray[counter]);
+			SceneCounter++;
+	}
 }
 
 function addChar(field, text) {
   field.innerHTML += text[i];
   i++;
+}
+
+function setKeys() {
+	window.onclick = () => controller(SceneCounter, SceneToLoad);
+	window.onkeydown = (e) => {
+		if(e.code == "Space" || e.code == "Enter" || e.code == "ArrowRight" || e.code == "NumpadEnter") controller(SceneCounter, SceneToLoad);
+	};
+}
+
+function unsetKeys() {
+	window.onclick = null;
+	window.onkeydown = null;
 }
 
 function changeButtons(display, number, content, click) {
@@ -122,9 +145,7 @@ function changeButtons(display, number, content, click) {
       buttonArray = [];
       controller(SceneCounter, SceneToLoad);
       setTimeout(function() { 
-        window.onclick = function() {
-          controller(SceneCounter, SceneToLoad);
-        };
+        setKeys();
       }, 100);
     };
   } else {
@@ -143,7 +164,7 @@ function changeButtons(display, number, content, click) {
 //I took this function from a blog: https://www.thecodeship.com/web-development/alternative-to-javascript-evil-setinterval/
 function repeater(func, wait, times) {
   let arg = Array.prototype.slice.call(arguments, 2);
-  var interv = function(w, t) {
+  let interv = function(w, t) {
     return function() {
       if (t-- > 0 && !stopper) {
         CurrentlyWriting = true;
@@ -191,9 +212,7 @@ function requestScenes(scene, countermod) {
         SceneCounter--;
       }
     } else controller(countermod, SceneToLoad);
-    window.onclick = function() {
-      controller(SceneCounter, SceneToLoad);
-    };
+    setKeys();
   };
   request.open('GET', scene);
   request.responseType = 'json';
@@ -202,7 +221,7 @@ function requestScenes(scene, countermod) {
 
 function setupLoad(bg, audio, name, img, button, noname) {
   document.body.style.backgroundImage = `url(${bg})`;
-  Source.src = audio;
+  SourceAudio.src = audio;
   Player.play();
   let size = name.length * 3 + 80;
   CharacterName.style.display = noname == "hidden" ? "hidden" : "block";
@@ -216,7 +235,6 @@ function setupLoad(bg, audio, name, img, button, noname) {
     console.log("done!");
   }
 }
-
 //document functions
 
 // Menu button
@@ -224,32 +242,32 @@ MenuButtons.children[0].onclick = function(e) {
   if(SaveMenu.style.display == "flex") SaveMenu.style.display = "none";
   PauseMenu.style.display = PauseMenu.style.display == "block" ? "none" : "block";
   e.stopPropagation();
-}
+};
 
 // Save button
 MenuButtons.children[1].onclick = function(e) {
-  if(PauseMenu.style.display == "block") PauseMenu.style.display = "none"
+  if(PauseMenu.style.display == "block") PauseMenu.style.display = "none";
   SaveMenu.style.display = SaveMenu.style.display == "flex" ? "none" : "flex";
   for(let save of SaveItems) {
     if(localStorage.getItem(save.id)) {
       save.children[1].innerText = "Slot " + save.id.substr(4);
       save.children[0].src = localStorage.getItem(save.id + "img");
     }
-    save.onclick = function(e) {
-      localStorage.setItem(save.id, JSON.stringify([document.body.style.backgroundImage, Source.src, CharacterName.innerHTML, CharacterImage.src, buttonArray, CharacterName.style.display, ScenePath, SceneCounter-1]));
+    save.onclick = function(e) { //jshint ignore:line
+      localStorage.setItem(save.id, JSON.stringify([document.body.style.backgroundImage, SourceAudio.src, CharacterName.innerHTML, CharacterImage.src, buttonArray, CharacterName.style.display, ScenePath, SceneCounter-1])); 
       save.children[1].innerText = "Slot " + save.id.substr(4);
-      html2canvas(document.body, {windowWidth: 640, windowHeight: 360, backgroundColor: null, imageTimeout: 0}).then((c) => {
+      html2canvas(document.body, {windowWidth: 480, windowHeight: 480, backgroundColor: null, imageTimeout: 0}).then((c) => {
         save.children[0].src = c.toDataURL("image/png");
         localStorage.setItem(save.id + "img", c.toDataURL("image/png"));
         TextAlert.style.display = "block";
         TextAlert.innerText = `Saved on Slot ${save.id}`;
         setTimeout(() => { TextAlert.style.display = "none"; }, 2000);
-      })
+      });
       e.stopPropagation();
-    }
+    };
   }
   e.stopPropagation();
-}
+};
 
 // Load button
 MenuButtons.children[2].onclick = function(e) {
@@ -259,31 +277,30 @@ MenuButtons.children[2].onclick = function(e) {
       save.children[1].innerText = "Slot " + save.id.substr(4);
       save.children[0].src = localStorage.getItem(save.id + "img");
     }
-    save.onclick = function(e) {
-      temp = JSON.parse(localStorage.getItem(save.id));
+    save.onclick = function(e) { //jshint ignore:line
+      let temp = JSON.parse(localStorage.getItem(save.id));
       requestScenes(temp[6], temp[7]);
       setupLoad(...temp);
       e.stopPropagation();
-    }
+    };
   }
   e.stopPropagation();
-}
+};
 
 SpeedRange2.oninput = function(e) {
   localStorage.setItem("TextSpeed", SpeedRange2.value);
   SpeedValue2.innerHTML = SpeedRange2.value + "ms";
   e.stopPropagation();
-}
+};
 
 VolumeRange2.oninput = function(e) {
   localStorage.setItem("Volume", VolumeRange2.value);
   VolumeValue2.innerHTML = VolumeRange2.value + "%";
   Player.volume = VolumeRange2.value * 0.01;
   e.stopPropagation();
-}
+};
 
 let debug = document.getElementById("debug");
-window.onresize = () => { debug.innerHTML = "H W " + window.innerHeight + "px;" + window.innerWidth + "px"; console.log(this)}
-
+window.onresize = () => { debug.innerHTML = "H W " + window.innerHeight + "px;" + window.innerWidth + "px";};
 
 requestScenes("/scenes/test.novel");
