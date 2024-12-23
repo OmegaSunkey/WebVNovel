@@ -13,20 +13,7 @@ This defines some attributes of your novel. Current attributes are `name`, `Text
 Components are the actions and descriptors of your novel. 
 Your novel has text, characters with name, characters, and choices. 
 You need to set components to give your novel shape. 
-Please insert them in order, or it will break and explode.
-
-Novel components go in the following order:
-- Bg!
-- Audio!
-- Name!
-- Image!
-- Button!
-- Scene!
-- Noname!
-- Nochar!
-- etc...?
-
-All components end with a ! (bang!). The button one has a \<parameter\>
+All components end with a ! (bang!). The button one has a `<parameter>`
 
 ### Bg! 
 Structure: `Bg!(directory)`
@@ -52,18 +39,21 @@ Structure: `Button!(string<directory>)` OR `Button!(string<continue>)`
 
 Creates a choice.
 
-\<directory\> must point to a .novel file.
+`<directory>` must point to a .novel file.
 
-If \<continue\> is present, it will use the same file.
+If `<continue>` is present, it will use the same file.
 
 ### Scene!
 Structure: `Scene!(directory)`
 
-Changes the file which is being read.
+Changes the file which is being read by the engine.
 
 ### Noname!
 Structure: `Noname!`
 
-Deletes the name component.
+Hides the name component.
 
-### Nochar! (not implemented yet)
+### Nochar!
+Structure: `Noname!`
+
+Hides the character.
