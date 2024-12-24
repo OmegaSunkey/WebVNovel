@@ -14,7 +14,7 @@
       <h1 id="Title"></h1>
       <div id="StartItems">
         <h2 id="PlayButton" class="Buttons">Play</h2>
-        <p id="OptionsButton" class="Buttons" onclick="document.getElementById('Options').style.display = 'block'">Options????</p>
+        <p id="OptionsButton" class="Buttons" onclick="document.getElementById('Options').style.display = 'block'">Options</p>
       </div>
     </div>
     <div id="Options">
@@ -24,7 +24,7 @@
       <input type="range" oninput="changeSpeed()" id="SpeedRange"><p id="RangeValue"></p>
       <img src="/resources/close.svg" id="CloseButton" onclick="document.getElementById('Options').style.display = 'none'">
     </div>
-    <img src="/resources/mute.svg" id="ONETIMECLICKIMGOINGINSANE">
+    <img src="/resources/mute.svg" id="MuteImg">
     <script>
       if(localStorage.length == 0) {
 		fetch("/config.json").then(config => config.json()).then(config => {
@@ -43,20 +43,27 @@
         forbidden();
       };
 	  
-      let MuteButton = document.getElementById("ONETIMECLICKIMGOINGINSANE");
+      let MuteButton = document.getElementById("MuteImg");
       let Main = document.getElementById("Main");
       Main.volume = (parseInt(localStorage.Volume) || 50 )* 0.01;
       let SpeedRange = document.getElementById("SpeedRange");
-      let RangeValue = document.getElementById("RangeValue")
+      let RangeValue = document.getElementById("RangeValue");
       SpeedRange.value = localStorage.getItem("TextSpeed") || 40;
       VolumeRange.value = localStorage.Volume;
       RangeValue.innerText = SpeedRange.value + "ms";
       VolumeValue.innerText = VolumeRange.value + "%";
       
+	  Main.play().then(() => {
+		console.log("Awesome!");
+		MuteButton.style.display = "none";
+	  }).catch(() => {
+		console.log("Cannot autoplay for now !");
+	  });
+	  
       MuteButton.onclick = function() {
         Main.play();
         MuteButton.style.display = "none";
-      }
+      };
       
       function changeSpeed() {
         localStorage.setItem("TextSpeed", SpeedRange.value);
@@ -65,16 +72,33 @@
       function changeVolume() {
         localStorage.setItem("Volume", VolumeRange.value);
         VolumeValue.innerText = VolumeRange.value + "%";
-        Main.volume = VolumeRange.value * 0.01
+        Main.volume = VolumeRange.value * 0.01;
       }
       
       async function forbidden() {
-        let novel = await fetch("/novel.html")
+        let novel = await fetch("/novel.html");
         let raw = await novel.text();
         
         document.write(raw);
         return;
       }
+	  
+	  async function registerWorker() {
+		if("serviceWorker" in navigator) {
+			try {
+				const register = await navigator.serviceWorker.register("/sw.js");
+				if(register.active) console.log("Worker has been installed!");
+			} catch (e) {
+				console.error(`it exploded with ${e}`);
+			}
+		}
+	  }
+	  
+	  registerWorker();
+	  
+	  navigator.serviceWorker.ready.then((r) => {
+		r.active.postMessage("please check if more resources have been added (not like you hear this even lol)");
+	  });
     </script>
   </body>
 </html>
