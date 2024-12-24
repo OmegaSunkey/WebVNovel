@@ -15,6 +15,24 @@ body {
   font-size: 52px;
 }
 
+#LoadingResources {
+	display: none;
+	position: absolute;
+	background-color: white;
+	padding: 10px;
+	border: 1px solid;
+	border-radius: 10px;
+}
+
+#LoadingResources.appear {
+	display: block;
+	animation: appear 0s ease-in forwards;
+}
+
+#LoadingResources.disappear {
+	animation: disappear 0.8s ease-out forwards;
+}
+
 #Options {
   display: none;
   position: absolute;
@@ -69,6 +87,28 @@ body {
   right: 2px;
   width: 32px;
   height: auto;
+}
+
+@keyframes appear {
+	0% {
+		opacity: 0;
+		display: none;
+	}
+	100% {
+		opacity: 1;
+		display: block;
+	}
+}
+
+@keyframes disappear {
+	0% {
+		opacity: 1;
+		display: block;
+	}
+	100% {
+		opacity: 0;
+		display: none;
+	}
 }
 
 @keyframes rainbow {

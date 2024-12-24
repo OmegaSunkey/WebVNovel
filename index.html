@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, height=device-height,initial-scale=1.0"/>
   </head>
   <body>
+	<p id="LoadingResources" class="disappear">Not ready yet!</p>
     <audio id="Main" loop>
       <source src="/resources/soundtracks/main.mp3" type="audio/mpeg">
     </audio>
@@ -39,8 +40,15 @@
 		Title.innerText = localStorage.NovelTitle;
 	  }
 	  
-      document.getElementById("PlayButton").onclick = function() {
-        forbidden();
+	  document.getElementById("PlayButton").onclick = function() {
+        if (LoadingResources.classList[0] === "disappear") {
+			LoadingResources.classList.remove("disappear");
+			LoadingResources.classList.add("appear");
+			setTimeout(() => {
+				LoadingResources.classList.remove("appear");
+				LoadingResources.classList.add("disappear")
+			}, 1000);
+		}
       };
 	  
       let MuteButton = document.getElementById("MuteImg");
@@ -97,8 +105,20 @@
 	  registerWorker();
 	  
 	  navigator.serviceWorker.ready.then((r) => {
-		r.active.postMessage("please check if more resources have been added (not like you hear this even lol)");
+		r.active.postMessage({
+			msg: "Has something changed?",
+			date: new Date().toUTCString(),
+		});
 	  });
+	  
+	  navigator.serviceWorker.addEventListener("message", (e) => {
+		if(e.data === "Resources are saved in cache." || e.data == "No change.") {
+			localStorage.setItem("ResourcesLoaded", 1);
+			document.getElementById("PlayButton").onclick = forbidden;
+		}
+	  });
+	  
+	  if(localStorage.ResourcesLoaded == 1 && !navigator.onLine) PlayButton.onclick = forbidden;
     </script>
   </body>
 </html>

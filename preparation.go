@@ -28,6 +28,8 @@ func main() {
 	panickingrn(error)
 	error = filepath.WalkDir("scenes", getList)
 	panickingrn(error)
+	error = filepath.WalkDir("styles", getList)
+	panickingrn(error)
 	
 	fmt.Println(fileArr)
 	
@@ -42,6 +44,9 @@ func main() {
 		fmt.Println("Seems like you're using Windows... removing backslash")
 		forWindowsFileArr(fileArr)
 	}
+	
+	//Add your own files here if you want
+	fileArr = slices.Concat(fileArr, []string{"/index.html", "/novel.html", "/engine.js", "/html2canvas.min.js", "/config.json"})
 	
 	fmt.Println("Converting to JSON type array...")
 	jsonArr, err := json.Marshal(fileArr)

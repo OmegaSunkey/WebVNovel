@@ -5,7 +5,13 @@ async function addResourcesToCache(r) {
   const cache = await caches.open("v1"); 
   const resources = r || await fetch("/resources.json");
   const json = await resources.json();
-  await cache.addAll(json);
+  let client = await self.clients.matchAll();
+  cache.addAll(json).then(() => {
+	if(!client[0]) return;
+  
+	client[0].postMessage("Resources are saved in cache.");
+	console.log("All resources loaded!");
+  });
 }
 
 async function cacheFirst(request) {
@@ -28,9 +34,16 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(cacheFirst(event.request));
 });
 
-self.addEventListener("message", async () => {
-	let resourcesjson = await fetch("/resources.json");
+self.addEventListener("message", async (e) => {
+	let resourcesjson = await fetch("/resources.json", {
+		headers: {
+			"If-Modified-Since": e.data.date
+		}
+	});
 	if(resourcesjson.status !== 304) {
 		addResourcesToCache(resourcesjson);
+	} else {
+		let cliente = await self.clients.matchAll();
+		cliente[0].postMessage("No change.");
 	}
 });
