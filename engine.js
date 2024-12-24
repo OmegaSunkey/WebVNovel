@@ -144,9 +144,7 @@ function changeButtons(display, number, content, click) {
       }
       buttonArray = [];
       controller(SceneCounter, SceneToLoad);
-      setTimeout(function() { 
-        setKeys();
-      }, 100);
+      setTimeout(setKeys, 100);
     };
   } else {
     buttons[number].onclick = function() {
