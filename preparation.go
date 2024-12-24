@@ -69,7 +69,7 @@ func getList(path string, d fs.DirEntry, err error) error {
 	if err != nil {
 		return err
 	}
-	if d.IsDir() {
+	if d.IsDir() || strings.Contains(d.Name(), "Thumbs.db") {
 		return nil
 	}
 	
