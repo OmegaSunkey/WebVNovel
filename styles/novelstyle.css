@@ -28,6 +28,7 @@
 #NovelComponent1 {
   position: fixed;
   bottom: 15px;
+  left: 16px;
   width: 320px;
 }
 
